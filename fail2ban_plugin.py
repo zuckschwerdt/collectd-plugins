@@ -79,18 +79,18 @@ class Fail2banClient:
                     else:
                         retval = [i.strip() for i in ret[1][1][1].split(",")]
                     if showRet:
-                        logSys.debug("OK : " + `ret[1]`)
+                        logSys.debug("OK : " + repr(ret[1]))
                         logSys.debug("retval: %s" % retval)
                     return retval
                 else:
-                    logSys.debug("NOK: " + `ret[1].args`)
+                    logSys.debug("NOK: " + repr(ret[1].args))
                     logSys.debug(ret[1])
                     return
             except socket.error:
                 if showRet:
                     logSys.error("Unable to contact server. Is it running?")
                 return
-            except Exception, e:
+            except Exception as e:
                 if showRet:
                     logSys.error(e)
                 return
