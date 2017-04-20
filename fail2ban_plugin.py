@@ -22,7 +22,8 @@
 # based on fail2ban-client code
 #
 
-import sys, string, os, logging
+import sys
+import logging
 import socket
 import collectd
 
@@ -36,6 +37,7 @@ from fail2ban.client.configurator import Configurator
 
 # Gets the instance of the logger.
 logSys = logging.getLogger("fail2ban.client")
+
 
 ##
 #
@@ -57,11 +59,11 @@ class Fail2banClient:
         self.__configurator.setBaseDir(self.__conf["conf"])
         self.__configurator.readEarly()
         socket = self.__configurator.getEarlyOptions()
-        if self.__conf["socket"] == None:
+        if self.__conf["socket"] is None:
             self.__conf["socket"] = socket["socket"]
         logSys.info("Using socket file " + self.__conf["socket"])
 
-    def __processCmd(self, jail = "", listjails = False, showRet = True):
+    def __processCmd(self, jail="", listjails=False, showRet=True):
         cmd = []
         if listjails is True:
             cmd.append(['status'])
@@ -75,7 +77,7 @@ class Fail2banClient:
                 ret = client.send(c)
                 if ret[0] == 0:
                     if listjails is False:
-                        retval =  ret[1][1][1][0][1]
+                        retval = ret[1][1][1][0][1]
                     else:
                         retval = [i.strip() for i in ret[1][1][1].split(",")]
                     if showRet:
@@ -99,23 +101,28 @@ class Fail2banClient:
         return self.__processCmd(jail)
 
     def list_jails(self):
-        return self.__processCmd(listjails = True)
+        return self.__processCmd(listjails=True)
+
 
 class ServerExecutionException(Exception):
     pass
 
+
 client = None
+
+
 def init():
     global client
     client = Fail2banClient()
     return True
+
 
 def read(data=None):
     global client
     jails = client.list_jails()
     for jail in jails:
         v1 = collectd.Values(type='gauge', interval=10)
-        v1.plugin='fail2ban-jails-' + jail
+        v1.plugin = 'fail2ban-jails-' + jail
         v1.dispatch(values=[client.get_banned(jail)])
 
 collectd.register_read(read)
