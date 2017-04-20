@@ -28,11 +28,11 @@ import collectd
 
 # Inserts our own modules path first in the list
 # fix for bug #343821
-sys.path.insert(1, "/usr/share/fail2ban")
+# sys.path.insert(1, "/usr/share/fail2ban")
 
 # Now we can import our modules
-from client.csocket import CSocket
-from client.configurator import Configurator
+from fail2ban.client.csocket import CSocket
+from fail2ban.client.configurator import Configurator
 
 # Gets the instance of the logger.
 logSys = logging.getLogger("fail2ban.client")
