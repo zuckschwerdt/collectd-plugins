@@ -25,7 +25,6 @@
 import sys
 import logging
 import socket
-import collectd
 
 # Inserts our own modules path first in the list
 # fix for bug #343821
@@ -36,7 +35,7 @@ from fail2ban.client.csocket import CSocket
 from fail2ban.client.configurator import Configurator
 
 # Gets the instance of the logger.
-logSys = logging.getLogger("fail2ban.client")
+logSys = logging.getLogger("fail2ban")
 
 
 ##
@@ -125,5 +124,15 @@ def read(data=None):
         v1.plugin = 'fail2ban-jails-' + jail
         v1.dispatch(values=[client.get_banned(jail)])
 
-collectd.register_read(read)
-collectd.register_init(init)
+
+if __name__ == "__main__":
+    client = Fail2banClient()
+    jails = client.list_jails()
+    for jail in jails:
+        print(jail, client.get_banned(jail))
+
+else:
+    import collectd
+
+    collectd.register_read(read)
+    collectd.register_init(init)
